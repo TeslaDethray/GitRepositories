@@ -7,7 +7,7 @@ require_once __DIR__ . '/vendor/php-github-api/vendor/autoload.php';
  *
  * @author SaraMcCutcheon <tesladethray at gmail dot com>
  */
-class apiHandler {
+class githubApi {
   
   protected $client;
   protected $paginator;
@@ -45,7 +45,8 @@ class apiHandler {
     * @return array results from the next page of the paginated query
     */
   public function nextPage() {
-    return $this->paginator->fetchNext();
+    $this->result = $this->paginator->fetchNext();
+    return $this->result;
   }
 
   /**
@@ -55,6 +56,17 @@ class apiHandler {
     */
   public function hasMorePages() {
     return $this->paginator->hasNext();
+  }
+
+  /**
+    * Moves the paginator down $num_pages number of pages
+    *
+    * @return array results from the the desired page of the paginated query
+    */
+  public function skipPages($num_pages) {
+    if(($num_pages <= 1) || !is_numeric($num_pages)) return $this->result;
+    $this->nextPage();
+    return $this->skipPages($num_pages - 1);
   }
 
 }
